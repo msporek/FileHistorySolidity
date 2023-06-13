@@ -41,7 +41,7 @@ contract('FileHistory', (accounts) => {
     assert.equal(otherInstanceOperations.length, 0, `Operations for file ${filePath1} were not stored correctly. They are available on the other instance of the contract.`);
   });
 
-  it('should store multiple entries and return then with a call to getOperationsInTimeRange()', async () => {
+  it('should store multiple entries and return them with a call to getOperationsInTimeRange()', async () => {
     const fileHistoryInstance = await FileHistory.new();
 
     // Store file history 
@@ -70,6 +70,37 @@ contract('FileHistory', (accounts) => {
 
     assert.ok(noOperations2, `Call to getOperationsInTimeRange() has failed for file ${filePath1}.`);
     assert.equal(noOperations2.length, 0, `Operations for file ${filePath1} were not returned correctly for the time range with no operations - earlier in time (expected 0 results).`);
+  });
+
+  it('should store multiple entries and return them with a call to getOperationsStartingAt()', async () => {
+    const fileHistoryInstance = await FileHistory.new();
+
+    // Store file history 
+    await fileHistoryInstance.trackOperation(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
+    await fileHistoryInstance.trackOperation(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
+    await fileHistoryInstance.trackOperation(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
+
+    // Get the operations to see if they have been stored. 
+    const fullTimeRangeOperations1 = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds1);
+    const fullTimeRangeOperations2 = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds1 - 100000);
+    const twoLastOperations = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds2);
+    const onlyTheLastOperation = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds3);
+    const noOperations = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds3 + 100000);
+
+    assert.ok(fullTimeRangeOperations1, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(fullTimeRangeOperations1.length, 3, `Operations for file ${filePath1} were not returned correctly for the full time range.`);
+
+    assert.ok(fullTimeRangeOperations2, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(fullTimeRangeOperations2.length, 3, `Operations for file ${filePath1} were not returned correctly for the full time range (earlier range).`);
+
+    assert.ok(twoLastOperations, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(twoLastOperations.length, 2, `Operations for file ${filePath1} were not returned correctly for the reduced time range (expected 2 operation2).`);
+
+    assert.ok(onlyTheLastOperation, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(onlyTheLastOperation.length, 1, `Operations for file ${filePath1} were not returned correctly for the reduced time range (expected 1 operation).`);
+    
+    assert.ok(noOperations, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(noOperations.length, 0, `Operations for file ${filePath1} were not returned correctly for the time range with no operations - later in time (expected 0 results).`);
   });
 
 });
