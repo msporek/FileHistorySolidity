@@ -6,7 +6,7 @@ import "./FileHistoryLib.sol";
 
 /// @title A contract for tracking history of multiple files in Ethereum and Ethereum-compatible blockchain. 
 /// @author Michal Sporek
-/// @notice Allows storing info about file operations history and retrieving the entries from the blockchain. 
+/// @notice Allows storing info about file history entries and retrieving the entries from the blockchain. 
 contract FileHistory {
 
     mapping(string => FileHistoryLib.History) allFileHistories; 
@@ -14,7 +14,7 @@ contract FileHistory {
     /// @dev Returns an array of all history entries for given file.
     /// @param _filePath File path.  
     /// @return Array of history entries.
-    function getOperations(
+    function getEntries(
         string memory _filePath
     ) public view returns (FileHistoryLib.HistoryEntry[] memory) { 
         require(bytes(_filePath).length > 0);
@@ -57,13 +57,13 @@ contract FileHistory {
     /// @param _filePath File path. 
     /// @param _timeStart Start time to filter history entries. 
     /// @return Array of history entries. 
-    function getOperationsStartingAt(
+    function getEntriesStartingAt(
         string memory _filePath, 
         uint _timeStart
     ) public view returns (FileHistoryLib.HistoryEntry[] memory) {
         require(bytes(_filePath).length > 0);
 
-        return getOperationsInTimeRange(_filePath, _timeStart, type(uint256).max);
+        return getEntriesInTimeRange(_filePath, _timeStart, type(uint256).max);
     }
 
     /// @dev Returns a list of all history entries for given file that have happened in a given time range. 
@@ -71,7 +71,7 @@ contract FileHistory {
     /// @param _timeStart Start of time range. 
     /// @param _timeEnd End of time range. 
     /// @return Array of history entries. 
-    function getOperationsInTimeRange(
+    function getEntriesInTimeRange(
         string memory _filePath, 
         uint _timeStart, 
         uint _timeEnd
@@ -112,12 +112,12 @@ contract FileHistory {
     /// @param _byUser Identifier of the user who has made the change. 
     /// @param _entryTimestamp When the file operation has occured. 
     /// @param _fileSize Size of the file after the operation has completed. 
-    function trackOperation(
+    function storeEntry(
         string memory _filePath,
         FileHistoryLib.HistoryEntryType _entryType, 
         string memory _byUser,
-        uint _entryTimestamp, 
-        uint _fileSize
+        uint256 _entryTimestamp, 
+        uint64 _fileSize
     ) public { 
         require(bytes(_filePath).length > 0);
         require(bytes(_byUser).length > 0);

@@ -11,8 +11,8 @@ library FileHistoryLib {
     struct HistoryEntry { 
         HistoryEntryType entryType;
         string byUser;
-        uint entryTimestamp;
-        uint fileSize;
+        uint256 entryTimestamp;
+        uint64 fileSize;
     }
 
     struct History { 

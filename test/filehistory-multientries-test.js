@@ -25,82 +25,82 @@ contract('FileHistory', (accounts) => {
     const otherFileHistoryInstance = await FileHistory.new();
 
     // Store file history 
-    await fileHistoryInstance.trackOperation(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
-    await fileHistoryInstance.trackOperation(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
-    await fileHistoryInstance.trackOperation(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
 
-    // Get the operations to see if they have been stored. 
-    const operations = await fileHistoryInstance.getOperations.call(filePath1);
+    // Get the entries to see if they have been stored. 
+    const entries = await fileHistoryInstance.getEntries.call(filePath1);
 
-    assert.ok(operations, `Call to getOperations() has failed for file ${filePath1}.`);
-    assert.equal(operations.length, 3, `Operations for file ${filePath1} were not stored correctly.`);
+    assert.ok(entries, `Call to getEntries() has failed for file ${filePath1}.`);
+    assert.equal(entries.length, 3, `Entries for file ${filePath1} were not stored correctly.`);
 
-    // Get the operations from the other instance of the contract. 
-    const otherInstanceOperations = await otherFileHistoryInstance.getOperations.call(filePath1);
-    assert.ok(otherInstanceOperations, `Call to getOperations() has failed for file ${filePath1} on the other instance of the contract.`);
-    assert.equal(otherInstanceOperations.length, 0, `Operations for file ${filePath1} were not stored correctly. They are available on the other instance of the contract.`);
+    // Get the entries from the other instance of the contract. 
+    const otherInstanceEntries = await otherFileHistoryInstance.getEntries.call(filePath1);
+    assert.ok(otherInstanceEntries, `Call to getEntries() has failed for file ${filePath1} on the other instance of the contract.`);
+    assert.equal(otherInstanceEntries.length, 0, `Entries for file ${filePath1} were not stored correctly. They are available on the other instance of the contract.`);
   });
 
-  it('should store multiple entries and return them with a call to getOperationsInTimeRange()', async () => {
+  it('should store multiple entries and return them with a call to getEntriesInTimeRange()', async () => {
     const fileHistoryInstance = await FileHistory.new();
 
     // Store file history 
-    await fileHistoryInstance.trackOperation(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
-    await fileHistoryInstance.trackOperation(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
-    await fileHistoryInstance.trackOperation(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
 
-    // Get the operations to see if they have been stored. 
-    const fullTimeRangeOperations = await fileHistoryInstance.getOperationsInTimeRange.call(filePath1, entryTimestampMiliseconds1, entryTimestampMiliseconds3);
-    const twoFirstOperations = await fileHistoryInstance.getOperationsInTimeRange.call(filePath1, entryTimestampMiliseconds1, entryTimestampMiliseconds2);
-    const onlyFirstOperation = await fileHistoryInstance.getOperationsInTimeRange.call(filePath1, entryTimestampMiliseconds1, entryTimestampMiliseconds1 + 1000);
-    const noOperations1 = await fileHistoryInstance.getOperationsInTimeRange.call(filePath1, entryTimestampMiliseconds3 + 100000, entryTimestampMiliseconds3 + 200000);
-    const noOperations2 = await fileHistoryInstance.getOperationsInTimeRange.call(filePath1, entryTimestampMiliseconds1 - 200000, entryTimestampMiliseconds1 - 100000);
+    // Get the Entries to see if they have been stored. 
+    const fullTimeRangeEntries = await fileHistoryInstance.getEntriesInTimeRange.call(filePath1, entryTimestampMiliseconds1, entryTimestampMiliseconds3);
+    const twoFirstEntries = await fileHistoryInstance.getEntriesInTimeRange.call(filePath1, entryTimestampMiliseconds1, entryTimestampMiliseconds2);
+    const onlyFirstEntry = await fileHistoryInstance.getEntriesInTimeRange.call(filePath1, entryTimestampMiliseconds1, entryTimestampMiliseconds1 + 1000);
+    const noEntries1 = await fileHistoryInstance.getEntriesInTimeRange.call(filePath1, entryTimestampMiliseconds3 + 100000, entryTimestampMiliseconds3 + 200000);
+    const noEntries2 = await fileHistoryInstance.getEntriesInTimeRange.call(filePath1, entryTimestampMiliseconds1 - 200000, entryTimestampMiliseconds1 - 100000);
 
-    assert.ok(fullTimeRangeOperations, `Call to getOperationsInTimeRange() has failed for file ${filePath1}.`);
-    assert.equal(fullTimeRangeOperations.length, 3, `Operations for file ${filePath1} were not returned correctly for the full time range.`);
+    assert.ok(fullTimeRangeEntries, `Call to getEntriesInTimeRange() has failed for file ${filePath1}.`);
+    assert.equal(fullTimeRangeEntries.length, 3, `Entries for file ${filePath1} were not returned correctly for the full time range.`);
 
-    assert.ok(twoFirstOperations, `Call to getOperationsInTimeRange() has failed for file ${filePath1}.`);
-    assert.equal(twoFirstOperations.length, 2, `Operations for file ${filePath1} were not returned correctly for the reduced time range (expected 2 operation2).`);
+    assert.ok(twoFirstEntries, `Call to getEntriesInTimeRange() has failed for file ${filePath1}.`);
+    assert.equal(twoFirstEntries.length, 2, `Entries for file ${filePath1} were not returned correctly for the reduced time range (expected 2 entries).`);
 
-    assert.ok(onlyFirstOperation, `Call to getOperationsInTimeRange() has failed for file ${filePath1}.`);
-    assert.equal(onlyFirstOperation.length, 1, `Operations for file ${filePath1} were not returned correctly for the reduced time range (expected 1 operation).`);
+    assert.ok(onlyFirstEntry, `Call to getEntriesInTimeRange() has failed for file ${filePath1}.`);
+    assert.equal(onlyFirstEntry.length, 1, `Entries for file ${filePath1} were not returned correctly for the reduced time range (expected 1 entry).`);
     
-    assert.ok(noOperations1, `Call to getOperationsInTimeRange() has failed for file ${filePath1}.`);
-    assert.equal(noOperations1.length, 0, `Operations for file ${filePath1} were not returned correctly for the time range with no operations - later in time (expected 0 results).`);
+    assert.ok(noEntries1, `Call to getEntriesInTimeRange() has failed for file ${filePath1}.`);
+    assert.equal(noEntries1.length, 0, `Entries for file ${filePath1} were not returned correctly for the time range with no Entries - later in time (expected 0 results).`);
 
-    assert.ok(noOperations2, `Call to getOperationsInTimeRange() has failed for file ${filePath1}.`);
-    assert.equal(noOperations2.length, 0, `Operations for file ${filePath1} were not returned correctly for the time range with no operations - earlier in time (expected 0 results).`);
+    assert.ok(noEntries2, `Call to getEntriesInTimeRange() has failed for file ${filePath1}.`);
+    assert.equal(noEntries2.length, 0, `Entries for file ${filePath1} were not returned correctly for the time range with no Entries - earlier in time (expected 0 results).`);
   });
 
-  it('should store multiple entries and return them with a call to getOperationsStartingAt()', async () => {
+  it('should store multiple entries and return them with a call to getEntriesStartingAt()', async () => {
     const fileHistoryInstance = await FileHistory.new();
 
     // Store file history 
-    await fileHistoryInstance.trackOperation(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
-    await fileHistoryInstance.trackOperation(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
-    await fileHistoryInstance.trackOperation(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath1, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3, { from: accounts[0] });
 
-    // Get the operations to see if they have been stored. 
-    const fullTimeRangeOperations1 = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds1);
-    const fullTimeRangeOperations2 = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds1 - 100000);
-    const twoLastOperations = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds2);
-    const onlyTheLastOperation = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds3);
-    const noOperations = await fileHistoryInstance.getOperationsStartingAt.call(filePath1, entryTimestampMiliseconds3 + 100000);
+    // Get the Entries to see if they have been stored. 
+    const fullTimeRangeEntries1 = await fileHistoryInstance.getEntriesStartingAt.call(filePath1, entryTimestampMiliseconds1);
+    const fullTimeRangeEntries2 = await fileHistoryInstance.getEntriesStartingAt.call(filePath1, entryTimestampMiliseconds1 - 100000);
+    const twoLastEntries = await fileHistoryInstance.getEntriesStartingAt.call(filePath1, entryTimestampMiliseconds2);
+    const onlyTheLastEntry = await fileHistoryInstance.getEntriesStartingAt.call(filePath1, entryTimestampMiliseconds3);
+    const noEntries = await fileHistoryInstance.getEntriesStartingAt.call(filePath1, entryTimestampMiliseconds3 + 100000);
 
-    assert.ok(fullTimeRangeOperations1, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
-    assert.equal(fullTimeRangeOperations1.length, 3, `Operations for file ${filePath1} were not returned correctly for the full time range.`);
+    assert.ok(fullTimeRangeEntries1, `Call to getEntriesStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(fullTimeRangeEntries1.length, 3, `Entries for file ${filePath1} were not returned correctly for the full time range.`);
 
-    assert.ok(fullTimeRangeOperations2, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
-    assert.equal(fullTimeRangeOperations2.length, 3, `Operations for file ${filePath1} were not returned correctly for the full time range (earlier range).`);
+    assert.ok(fullTimeRangeEntries2, `Call to getEntriesStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(fullTimeRangeEntries2.length, 3, `Entries for file ${filePath1} were not returned correctly for the full time range (earlier range).`);
 
-    assert.ok(twoLastOperations, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
-    assert.equal(twoLastOperations.length, 2, `Operations for file ${filePath1} were not returned correctly for the reduced time range (expected 2 operation2).`);
+    assert.ok(twoLastEntries, `Call to getEntriesStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(twoLastEntries.length, 2, `Entries for file ${filePath1} were not returned correctly for the reduced time range (expected 2 entry).`);
 
-    assert.ok(onlyTheLastOperation, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
-    assert.equal(onlyTheLastOperation.length, 1, `Operations for file ${filePath1} were not returned correctly for the reduced time range (expected 1 operation).`);
+    assert.ok(onlyTheLastEntry, `Call to getEntriesStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(onlyTheLastEntry.length, 1, `Entries for file ${filePath1} were not returned correctly for the reduced time range (expected 1 entry).`);
     
-    assert.ok(noOperations, `Call to getOperationsStartingAt() has failed for file ${filePath1}.`);
-    assert.equal(noOperations.length, 0, `Operations for file ${filePath1} were not returned correctly for the time range with no operations - later in time (expected 0 results).`);
+    assert.ok(noEntries, `Call to getEntriesStartingAt() has failed for file ${filePath1}.`);
+    assert.equal(noEntries.length, 0, `Entries for file ${filePath1} were not returned correctly for the time range with no Entries - later in time (expected 0 results).`);
   });
 
 });

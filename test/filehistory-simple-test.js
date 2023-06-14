@@ -2,14 +2,14 @@ const FileHistory = artifacts.require("FileHistory");
 
 contract('FileHistory', (accounts) => {
 
-  it('should get empty list of operations on a file with no operations (calling getOperations()).', async () => {
+  it('should get empty list of Entries on a file with no Entries (calling getEntries()).', async () => {
     const fileHistoryInstance = await FileHistory.deployed();
 
     const filePath = '\\\\Share\\File1.txt';
-    const operations = await fileHistoryInstance.getOperations.call(filePath);
+    const entries = await fileHistoryInstance.getEntries.call(filePath);
 
-    assert.ok(operations, "Call to getOperations() has failed.");
-    assert.equal(operations.length, 0, "Operations failed.");
+    assert.ok(entries, "Call to getEntries() has failed. Expected return value.");
+    assert.equal(entries.length, 0, "Call to getEntries() has failed. Expected empty array of results.");
   });
 
   it('should store single file entry correctly', async () => {
@@ -22,23 +22,23 @@ contract('FileHistory', (accounts) => {
     const entryTimestampMiliseconds = new Date().valueOf();
     const fileSizeBytes = 1024; 
 
-    await fileHistoryInstance.trackOperation(filePath, entryType, byUser, entryTimestampMiliseconds, fileSizeBytes, { from: accounts[0] });
+    await fileHistoryInstance.storeEntry(filePath, entryType, byUser, entryTimestampMiliseconds, fileSizeBytes, { from: accounts[0] });
 
-    // Get the operations to see if they have been stored. 
-    const operations = await fileHistoryInstance.getOperations.call(filePath);
+    // Get the Entries to see if they have been stored. 
+    const entries = await fileHistoryInstance.getEntries.call(filePath);
 
-    assert.ok(operations, "Call to getOperations() has failed.");
-    assert.equal(operations.length, 1, "Operations have not been stored correctly.");
-    assert.equal(operations[0].entryType, entryType, "Operation \"entrytype\" has not been stored correctly.");
-    assert.equal(operations[0].byUser, byUser, "Operation \"byUser\" has not been stored correctly.");
-    assert.equal(operations[0].entryTimestamp, entryTimestampMiliseconds, "Operation \"entryTimestamp\" has not been stored correctly.");
-    assert.equal(operations[0].fileSize, fileSizeBytes, "Operation \"fileSize\" has not been stored correctly.");
+    assert.ok(entries, "Call to getEntries() has failed.");
+    assert.equal(entries.length, 1, "Entries have not been stored correctly.");
+    assert.equal(entries[0].entryType, entryType, "Entry \"entryType\" has not been stored correctly.");
+    assert.equal(entries[0].byUser, byUser, "Entry \"byUser\" has not been stored correctly.");
+    assert.equal(entries[0].entryTimestamp, entryTimestampMiliseconds, "Entry \"entryTimestamp\" has not been stored correctly.");
+    assert.equal(entries[0].fileSize, fileSizeBytes, "Entry \"fileSize\" has not been stored correctly.");
 
     // Checking if nothing is returned for another file. 
     const anotherFilePath = '\\\\Share\\File2.txt';
-    const anotherFileOperations = await fileHistoryInstance.getOperations.call(anotherFilePath);
-    assert.ok(anotherFileOperations, "Call to getOperations() has failed.");
-    assert.equal(anotherFileOperations.length, 0, "Error on operations storage. Returned operation of another file.");
+    const anotherFileEntries = await fileHistoryInstance.getEntries.call(anotherFilePath);
+    assert.ok(anotherFileEntries, "Call to getEntries() has failed.");
+    assert.equal(anotherFileEntries.length, 0, "Error on Entries storage. Returned entry of another file.");
   });
 
 });
