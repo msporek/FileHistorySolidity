@@ -6,8 +6,10 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/FileHistory.sol";
 
-/// @title Test FileHistory contract's ability to store Entries for multiple files and retrieving these Entries. 
-/// @author Michal Sporek 
+/**
+ * @title Test FileHistory contract's ability to store Entries for multiple files and retrieving these Entries. 
+ * @author Michal Sporek 
+ */
 contract TestFileHistoryMultiFiles { 
 
   string filePath1 = '\\\\Share\\File1.txt';
@@ -32,9 +34,15 @@ contract TestFileHistoryMultiFiles {
   uint64 fileSizeBytes2 = 2048; 
   uint64 fileSizeBytes3 = 4096; 
 
+  /**
+   * @dev Function tests a case of storing one history entry for each of three separate files, and then retrieving the history 
+   * entries for those files to see if the entries have been successfully stored and returned for each individual file. Also tests 
+   * retrieving entries for another file that we have not stored any history entries for.  
+   */
   function testShouldStoreEntriesForMultipleFiles() public { 
     FileHistory historyContract = FileHistory(DeployedAddresses.FileHistory());
 
+    // Store one history entry for each of three file. 
     historyContract.storeEntry(filePath1, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1);
     historyContract.storeEntry(filePath2, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2);
     historyContract.storeEntry(filePath3, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3);

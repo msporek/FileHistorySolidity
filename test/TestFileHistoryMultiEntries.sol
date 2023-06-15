@@ -6,8 +6,10 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/FileHistory.sol";
 
-/// @title Test FileHistory contract's ability to store multiple Entries for a single file and retrieving these Entries. 
-/// @author Michal Sporek 
+/**
+ * @title Test FileHistory contract's ability to store multiple Entries for a single file and retrieving these Entries. 
+ * @author Michal Sporek 
+ */
 contract TestFileHistoryMultiEntries { 
 
   string filePath = '\\\\Share\\File1.txt';
@@ -30,9 +32,14 @@ contract TestFileHistoryMultiEntries {
   uint64 fileSizeBytes2 = 2048; 
   uint64 fileSizeBytes3 = 4096; 
 
+  /**
+   * @dev Function tests a case with storing three history entries for a single file and retrieving them, 
+   * checking if each property of each history entry has been stored and returned properly. 
+   */
   function testShouldStoreMultipleEntries() public { 
     FileHistory historyContract = FileHistory(DeployedAddresses.FileHistory());
 
+    // Store three history entries for a single file. 
     historyContract.storeEntry(filePath, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1);
     historyContract.storeEntry(filePath, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2);
     historyContract.storeEntry(filePath, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3);
@@ -55,6 +62,14 @@ contract TestFileHistoryMultiEntries {
     Assert.equal(entries[2].byUser, byUser3, "Property \"byUser\" has not been stored correctly for the third entry.");
     Assert.equal(entries[2].entryTimestamp, entryTimestampMiliseconds3, "Property \"entryTimestamp\" has not been stored correctly for the third entry.");
     Assert.equal(entries[2].fileSize, fileSizeBytes3, "Property \"fileSize\" has not been stored correctly for the third entry.");
+  }
+
+  /**
+   * @dev Function tests retrieving history entries for a file for which we have not stored any history entries in the Blockchain 
+   * before. It expects than an empty array of history entries should be returned. 
+   */
+  function testShouldNotReturnForUnknownFile() public { 
+    FileHistory historyContract = FileHistory(DeployedAddresses.FileHistory());
 
     // Testing to check if no Entries are returned for yet another file. 
     FileHistoryLib.HistoryEntry[] memory anotherFileEntries = historyContract.getEntries(anotherFilePath);

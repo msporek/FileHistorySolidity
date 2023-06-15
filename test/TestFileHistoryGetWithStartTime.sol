@@ -6,8 +6,10 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/FileHistory.sol";
 
-/// @title Test FileHistory contract's getEntriesStartingAt() function.  
-/// @author Michal Sporek 
+/**
+ * @title Test FileHistory contract's getEntriesStartingAt() function. 
+ * @author Michal Sporek 
+ */
 contract TestFileHistoryGetWithStartTime { 
 
   string filePath = '\\\\Share\\File1.txt';
@@ -30,9 +32,14 @@ contract TestFileHistoryGetWithStartTime {
   uint64 fileSizeBytes2 = 2048; 
   uint64 fileSizeBytes3 = 4096; 
 
+  /**
+   * @dev Function tests a case with storing three history entries for a single file and retrieving them 
+   * using the getEntriesStartingAt() method with a different value of the _timeStart to see if proper values are returned. 
+   */
   function testShouldReturnEntriesWithStartTime() public { 
     FileHistory historyContract = FileHistory(DeployedAddresses.FileHistory());
 
+    // Store three history entries for a single file. 
     historyContract.storeEntry(filePath, entryType1, byUser1, entryTimestampMiliseconds1, fileSizeBytes1);
     historyContract.storeEntry(filePath, entryType2, byUser2, entryTimestampMiliseconds2, fileSizeBytes2);
     historyContract.storeEntry(filePath, entryType3, byUser3, entryTimestampMiliseconds3, fileSizeBytes3);

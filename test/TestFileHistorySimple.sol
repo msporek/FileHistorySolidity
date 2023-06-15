@@ -6,10 +6,16 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/FileHistory.sol";
 
-/// @title Test FileHistory contract storage and retrieval of history entries. 
-/// @author Michal Sporek 
+/**
+ * @title Test FileHistory contract storage and retrieval of history entries. 
+ * @author Michal Sporek
+ */
 contract TestFileHistorySimple { 
 
+  /**
+   * @dev Function tests the case of retrieving history entries for a file that we have not stored any history entries before 
+   * (expecting an empty array of history entries to be returned). 
+   */
   function testInitialEmptyListOfEntries() public {
     FileHistory historyContract = FileHistory(DeployedAddresses.FileHistory());
 
@@ -18,6 +24,10 @@ contract TestFileHistorySimple {
     Assert.equal(historyContract.getEntries(filePath1).length, 0, "Call to getEntries() has failed. Expected empty array of results.");
   }
 
+  /**
+   * @dev Function tests the case of storing and retrieving a single history entry. The unit test verifies if all properties 
+   * of the history entry have been stored and then returned correctly. 
+   */
   function testShouldStoreSingleFileEntry() public { 
     FileHistory historyContract = FileHistory(DeployedAddresses.FileHistory());
 
