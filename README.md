@@ -1,4 +1,4 @@
-# FileHistorySolidity
+# File History Tracking smart contract (Solidity)
 A free version of a library created for tracking history of multiple files in file systems (Solidity, JavaScript).
 
 The smart contract allows storing information about operations executed on files in a file system and the file history is stored in the Blockchain storage. It is then possible to retrieve history entries for operations of a particular file. The logic supports returning filtered history entry operations. 
