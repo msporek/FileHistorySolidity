@@ -61,6 +61,8 @@ contract FileHistory {
 
     /**
      * @dev Returns a list of all history entries for given file that have happened at the given timestamp, or later. 
+     * Watch for gas consumption which might be significant as the function requires array filtering and rebuilding. 
+     * 
      * @param _filePath File path to query for history entries. 
      * @param _timeStart Start time to filter history entries. 
      * @return Array of history entries that start at or later than _timeStart. 
@@ -76,6 +78,8 @@ contract FileHistory {
 
     /**
      * @dev Returns a list of all history entries for given file that have happened in a given time range. 
+     * Watch for gas consumption which might be significant as the function requires array filtering and rebuilding. 
+     * 
      * @param _filePath File path to query for history entries. 
      * @param _timeStart Start of time range. 
      * @param _timeEnd End of time range. 

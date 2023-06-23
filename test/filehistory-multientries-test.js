@@ -18,6 +18,8 @@ const fileSizeBytes1 = 1024;
 const fileSizeBytes2 = 2048;
 const fileSizeBytes3 = 4096; 
 
+// Testing the FileHistory contract with scenarios that involve storing multiple history entries 
+// for a single file on the blockchain and retrieving them with a number of ways.  
 contract('FileHistory', (accounts) => {
 
   it('should store multiple entries and return then correctly', async () => {

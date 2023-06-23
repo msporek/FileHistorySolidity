@@ -1,5 +1,7 @@
 const FileHistory = artifacts.require("FileHistory");
 
+// Testing the FileHistory contract with scenarios that involve storing multiple history entries 
+// for multiple files on the blockchain and retrieving them with a number of ways.  
 contract('FileHistory', (accounts) => {
 
   it('should store entries for multiple files correctly', async () => {

@@ -1,5 +1,7 @@
 const FileHistory = artifacts.require("FileHistory");
 
+// Testing the FileHistory contract with scenarios that involve storing a single file history entry 
+// and retrieving it from the blockchain. 
 contract('FileHistory', (accounts) => {
 
   it('should get empty list of Entries on a file with no Entries (calling getEntries()).', async () => {
